@@ -1,0 +1,30 @@
+{% extends '_base.html' %}
+
+{% block content %}
+  {% for category, photos in photos.items() %}
+    <h2 class="category">{{ category }}</h2>
+    <div class="img_container">
+      {% for photo in photos %}
+        <img src="{{ url_for('thumbnail_file', category=category, filename=photo.rsplit('.', 1)[0] + '.thumb.' + photo.rsplit('.', 1)[1]) }}" class="thumbnail">
+      {% endfor %}
+    </div>
+  {% endfor %}
+  <script>
+    var idx = 0;
+    {% for category, photos in photos.items() %}
+      {% for photo in photos %}
+        document.getElementsByClassName('thumbnail')[idx++].addEventListener('click', function() {
+          document.getElementsByClassName('open_image')[0].style.display = "block";
+          document.getElementsByClassName('image_name')[0].style.display = "block";
+          document.getElementsByClassName('open_image')[0].src = "{{ url_for('uploaded_file', category=category, filename=photo) }}";
+          document.getElementsByClassName('image_name')[0].innerText = "{{ photo }}";
+        });
+      {% endfor %}
+    {% endfor %}
+    document.getElementsByClassName('body')[0].addEventListener('mousedown', function(event) {
+      event.stopPropagation();
+      document.getElementsByClassName('open_image')[0].style.display = "none";
+      document.getElementsByClassName('image_name')[0].innerText = "";
+    });
+  </script>
+{% endblock %}
